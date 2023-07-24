@@ -29,7 +29,7 @@ all_sprites.add(Player)
 while True:
     if Player.bullet is not None:
         bullets.add(Player.bullet)
-    screen.fill((255, 255, 255))
+    screen.fill((0, 0, 0))
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
