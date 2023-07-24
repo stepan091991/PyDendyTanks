@@ -45,8 +45,6 @@ while True:
     pygame.draw.rect(screen, LIGHT_BLUE, Player.right_rect, 2)
     pygame.draw.rect(screen, LIGHT_BLUE, Player.up_rect, 2)
     pygame.draw.rect(screen, LIGHT_BLUE, Player.down_rect, 2)
-    for bullet in bullets:
-        pygame.draw.rect(screen, LIGHT_BLUE, bullet.rect, 2)
     bullets.update(blocks)
     bullets.draw(screen)
     leaves_block.update()

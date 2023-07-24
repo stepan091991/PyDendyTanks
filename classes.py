@@ -98,7 +98,14 @@ class Player(pygame.sprite.Sprite):
         self.up_rect = (self.rect.x + 5, self.rect.y, 42, 10)
         self.down_rect = (self.rect.x + 5, self.rect.y + 42, 42, 10)
     def spawn_bullet(self):
-        self.bullet = Bullet(self, self.rect.x, self.rect.y)
+        if self.image == self.texture_left or self.image == self.texture_left_1:
+            self.bullet = Bullet(self, self.rect.x, self.rect.y + 24)
+        if self.image == self.texture_right or self.image == self.texture_right_1:
+            self.bullet = Bullet(self, self.rect.x + 53, self.rect.y + 24)
+        if self.image == self.texture_down or self.image == self.texture_down_1:
+            self.bullet = Bullet(self, self.rect.x + 23, self.rect.y + 53)
+        if self.image == self.texture_up or self.image == self.texture_up_1:
+            self.bullet = Bullet(self, self.rect.x + 3, self.rect.y)
         print("yes")
     def animation(self):
         if self.image == self.texture_left:
@@ -126,29 +133,33 @@ class Bullet(pygame.sprite.Sprite):
         self.right_image = right_image
         self.up_image = up_image
         self.down_image = down_image
+        self.image = left_image
         self.speed = 5
-        if self.owner.image == self.owner.texture_up:
+        self.rect = self.image.get_rect()
+        self.orientation = "up"
+        self.orientation = None
+        if self.owner.image == self.owner.texture_up or self.owner.image == self.owner.texture_up_1:
             self.orientation = "up"
             self.image = self.up_image
             self.rect = self.image.get_rect()
             self.rect.center = (1,1)
             self.rect.x = x + 52/2 - 6
             self.rect.y = y
-        if self.owner.image == self.owner.texture_left:
+        elif self.owner.image == self.owner.texture_left or self.owner.image == self.owner.texture_left_1:
             self.orientation = "left"
             self.image = self.left_image
             self.rect = self.image.get_rect()
             self.rect.center = (12 / 2, 16 / 2)
             self.rect.x = x
             self.rect.y = y
-        if self.owner.image == self.owner.texture_right:
+        elif self.owner.image == self.owner.texture_right or self.owner.image == self.owner.texture_right_1:
             self.orientation = "right"
             self.image = self.right_image
             self.rect = self.image.get_rect()
             self.rect.center = (12 / 2, 16 / 2)
             self.rect.x = x
             self.rect.y = y
-        if self.owner.image == self.owner.texture_down:
+        elif self.owner.image == self.owner.texture_down or self.owner.image == self.owner.texture_down_1:
             self.orientation = "down"
             self.image = self.down_image
             self.rect = self.image.get_rect()
@@ -156,13 +167,13 @@ class Bullet(pygame.sprite.Sprite):
             self.rect.x = x
             self.rect.y = y
     def update(self,blocks):
-        if self.orientation == "up":
+        if self.orientation == "up" and self.orientation:
             self.rect.y -= self.speed
-        if self.orientation == "left":
+        if self.orientation == "left" and self.orientation:
             self.rect.x -= self.speed
-        if self.orientation == "right":
+        if self.orientation == "right" and self.orientation:
             self.rect.x += self.speed
-        if self.orientation == "down":
+        if self.orientation == "down" and self.orientation:
             self.rect.y += self.speed
         for block in blocks:
             if block.block_type != 0 and block.block_type != 11:
