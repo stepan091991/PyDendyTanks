@@ -9,7 +9,10 @@ class Block(pygame.sprite.Sprite):
     def __init__(self, texture, x, y, block_type):
         pygame.sprite.Sprite.__init__(self)
         self.image = texture
+        self.image.set_colorkey((255, 255, 255))
         self.rect = self.image.get_rect()
+        self.rect.width = 64
+        self.rect.height = 64
         self.rect.center = (64 / 2, 64 / 2)
         self.rect.x = x
         self.rect.y = y
@@ -44,8 +47,14 @@ class Player(pygame.sprite.Sprite):
         self.up_rect = (self.rect.x, self.rect.y, 52, 10)
         self.down_rect = (self.rect.x, self.rect.y + 42, 52, 52 / 4)
         self.bullet = None
+        self.last = 0
+        self.cooldown = 150
 
     def update(self, blocks):
+        now = pygame.time.get_ticks()
+        if now - self.last >= self.cooldown:
+            self.last = now
+            self.animation()
         collide_fase = []
         keystate = pygame.key.get_pressed()
         for block in blocks:
@@ -60,20 +69,29 @@ class Player(pygame.sprite.Sprite):
                     collide_fase.append("down")
         if keystate[pygame.K_LEFT] and self.rect.x > 0 and not "left" in collide_fase:
             if self.image != self.texture_left:
-                self.image = self.texture_left
+                self.image = self.texture_left_1
             self.rect.x -= self.speed
         elif keystate[pygame.K_RIGHT] and self.rect.x < 716 and not "right" in collide_fase:
             if self.image != self.texture_right:
-                self.image = self.texture_right
+                self.image = self.texture_right_1
             self.rect.x += self.speed
         elif keystate[pygame.K_UP] and self.rect.y > 0 and not "up" in collide_fase:
             if self.image != self.texture_up:
-                self.image = self.texture_up
+                self.image = self.texture_up_1
             self.rect.y -= self.speed
         elif keystate[pygame.K_DOWN] and self.rect.y < 780 and not "down" in collide_fase:
             if self.image != self.texture_down:
-                self.image = self.texture_down
+                self.image = self.texture_down_1
             self.rect.y += self.speed
+        else:
+            if self.image == self.texture_left_1:
+                self.image = self.texture_left
+            if self.image == self.texture_right_1:
+                self.image = self.texture_right
+            if self.image == self.texture_up_1:
+                self.image = self.texture_up
+            if self.image == self.texture_down_1:
+                self.image = self.texture_down
         collide_fase.clear()
         self.left_rect = (self.rect.x, self.rect.y + 5, 10, 42)
         self.right_rect = (self.rect.x + 42, self.rect.y + 5, 10, 42)
@@ -82,6 +100,23 @@ class Player(pygame.sprite.Sprite):
     def spawn_bullet(self):
         self.bullet = Bullet(self, self.rect.x, self.rect.y)
         print("yes")
+    def animation(self):
+        if self.image == self.texture_left:
+            self.image = self.texture_left_1
+        elif self.image == self.texture_left_1:
+            self.image = self.texture_left
+        if self.image == self.texture_right:
+            self.image = self.texture_right_1
+        elif self.image == self.texture_right_1:
+            self.image = self.texture_right
+        if self.image == self.texture_up:
+            self.image = self.texture_up_1
+        elif self.image == self.texture_up_1:
+            self.image = self.texture_up
+        if self.image == self.texture_down:
+            self.image = self.texture_down_1
+        elif self.image == self.texture_down_1:
+            self.image = self.texture_down
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self,owner,x,y):
@@ -134,31 +169,44 @@ class Bullet(pygame.sprite.Sprite):
                 if block.width == 0 or block.height == 0:
                     block.block_type = 0
                 if self.rect.colliderect(block.right_rect):
-                    print(block.width)
-                    print(block.height)
-                    print("___")
                     block.width -= 16
                     block.image = block.image.subsurface((0, 0, block.width, block.height))
+                    block.rect.width -= 16
                     block.image.set_colorkey((255,255,255))
+                    block.right_rect = (block.right_rect[0] - 16, block.rect.y, 5, block.height)
+                    block.up_rect = (block.rect.x, block.rect.y, block.width, 5)
+                    block.down_rect = (block.rect.x, block.rect.y + block.height - 5, block.width, 5)
                     self.rect.x = 9999
                     self.kill()
                 if self.rect.colliderect(block.left_rect):
                     block.width -= 16
                     block.image = block.image.subsurface((0, 0, block.width, block.height))
+                    block.rect.width -= 16
                     block.image.set_colorkey((255,255,255))
+                    block.left_rect = (block.left_rect[0] + 16, block.rect.y, 5, block.height)
+                    block.up_rect = (block.rect.x + 16, block.rect.y, block.width, 5)
+                    block.down_rect = (block.rect.x + 16, block.rect.y + block.height - 5, block.width, 5)
                     block.rect.x += 16
                     self.rect.x = 9999
                     self.kill()
                 if self.rect.colliderect(block.down_rect):
                     block.height -= 16
+                    block.rect.height -= 16
                     block.image = block.image.subsurface((0, 0, block.width, block.height))
                     block.image.set_colorkey((255,255,255))
+                    block.right_rect = (block.right_rect[0], block.right_rect[1], 5, block.height)
+                    block.left_rect = (block.left_rect[0], block.left_rect[1], 5, block.height)
+                    block.down_rect = (block.down_rect[0], block.down_rect[1] - 16, block.width, 5)
                     self.rect.x = 9999
                     self.kill()
                 if self.rect.colliderect(block.up_rect):
                     block.height -= 16
+                    block.rect.height -= 16
                     block.image = block.image.subsurface((0, 0, block.width, block.height))
                     block.image.set_colorkey((255,255,255))
+                    block.right_rect = (block.right_rect[0], block.right_rect[1] + 16, 5, block.height)
+                    block.left_rect = (block.left_rect[0], block.left_rect[1] + 16, 5, block.height)
+                    block.up_rect = (block.rect.x, block.rect.y + 16, block.width, 5)
                     block.rect.y += 16
                     self.rect.x = 9999
                     self.kill()

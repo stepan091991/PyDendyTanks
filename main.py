@@ -53,9 +53,11 @@ while True:
     leaves_block.draw(screen)
     for block in blocks:
         if block.block_type != 0:
+            pygame.draw.rect(screen, LIGHT_BLUE, block.rect, 1)
             pygame.draw.rect(screen, WHITE, block.left_rect, 1)
             pygame.draw.rect(screen, WHITE, block.right_rect, 1)
             pygame.draw.rect(screen, WHITE, block.up_rect, 1)
             pygame.draw.rect(screen, WHITE, block.down_rect, 1)
+            pass
     pygame.display.flip()
     fpsClock.tick(fps)
