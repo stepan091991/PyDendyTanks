@@ -30,13 +30,21 @@ class Player(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = texture_up
         self.texture_up = texture_up
+        self.texture_up.set_colorkey((0, 0, 1))
         self.texture_up_1 = texture_up_1
+        self.texture_up_1.set_colorkey((0, 0, 1))
         self.texture_left = texture_left
+        self.texture_left.set_colorkey((0, 0, 1))
         self.texture_left_1 = texture_left_1
+        self.texture_left_1.set_colorkey((0, 0, 1))
         self.texture_down = texture_down
+        self.texture_down.set_colorkey((0, 0, 1))
         self.texture_down_1 = texture_down_1
+        self.texture_down_1.set_colorkey((0, 0, 1))
         self.texture_right = texture_right
+        self.texture_right.set_colorkey((0, 0, 1))
         self.texture_right_1 = texture_right_1
+        self.texture_right_1.set_colorkey((0, 0, 1))
         self.rect = self.image.get_rect()
         self.rect.center = (52 / 2, 52 / 2)
         self.rect.x = x
@@ -58,7 +66,13 @@ class Player(pygame.sprite.Sprite):
         collide_fase = []
         keystate = pygame.key.get_pressed()
         for block in blocks:
-            if block.block_type != 0 and block.block_type != 11:
+            if self.rect.colliderect(block.rect):
+                if block.block_type == 8:
+                    self.speed = 7
+                    break
+                else:
+                    self.speed = 2
+            if block.block_type != 0 and block.block_type != 11 and block.block_type != 8:
                 if block.rect.colliderect(self.left_rect):
                     collide_fase.append("left")
                 if block.rect.colliderect(self.right_rect):
@@ -101,9 +115,9 @@ class Player(pygame.sprite.Sprite):
         if self.image == self.texture_left or self.image == self.texture_left_1:
             self.bullet = Bullet(self, self.rect.x, self.rect.y + 24)
         if self.image == self.texture_right or self.image == self.texture_right_1:
-            self.bullet = Bullet(self, self.rect.x + 53, self.rect.y + 24)
+            self.bullet = Bullet(self, self.rect.x + 40, self.rect.y + 24)
         if self.image == self.texture_down or self.image == self.texture_down_1:
-            self.bullet = Bullet(self, self.rect.x + 23, self.rect.y + 53)
+            self.bullet = Bullet(self, self.rect.x + 23, self.rect.y + 40)
         if self.image == self.texture_up or self.image == self.texture_up_1:
             self.bullet = Bullet(self, self.rect.x + 3, self.rect.y)
         print("yes")
@@ -176,7 +190,7 @@ class Bullet(pygame.sprite.Sprite):
         if self.orientation == "down" and self.orientation:
             self.rect.y += self.speed
         for block in blocks:
-            if block.block_type != 0 and block.block_type != 11:
+            if block.block_type == 1:
                 if block.width == 0 or block.height == 0:
                     block.block_type = 0
                 if self.rect.colliderect(block.right_rect):
@@ -219,5 +233,9 @@ class Bullet(pygame.sprite.Sprite):
                     block.left_rect = (block.left_rect[0], block.left_rect[1] + 16, 5, block.height)
                     block.up_rect = (block.rect.x, block.rect.y + 16, block.width, 5)
                     block.rect.y += 16
+                    self.rect.x = 9999
+                    self.kill()
+            elif block.block_type != 1 and block.block_type != 0 and block.block_type != 7 and block.block_type != 8:
+                if self.rect.colliderect(block.rect):
                     self.rect.x = 9999
                     self.kill()

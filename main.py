@@ -50,7 +50,7 @@ while True:
     leaves_block.update()
     leaves_block.draw(screen)
     for block in blocks:
-        if block.block_type != 0:
+        if block.block_type != 0 and block.block_type != 7:
             pygame.draw.rect(screen, LIGHT_BLUE, block.rect, 1)
             pygame.draw.rect(screen, WHITE, block.left_rect, 1)
             pygame.draw.rect(screen, WHITE, block.right_rect, 1)
