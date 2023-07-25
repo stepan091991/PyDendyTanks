@@ -19,7 +19,7 @@ bullets = pygame.sprite.Group()
 leaves_block = pygame.sprite.Group()
 created_map = map.create_map()
 for block in created_map:
-    if block.block_type == 11:
+    if block.block_type == 7:
         leaves_block.add(block)
     else:
         blocks.add(block)
@@ -45,7 +45,7 @@ while True:
     pygame.draw.rect(screen, LIGHT_BLUE, Player.right_rect, 2)
     pygame.draw.rect(screen, LIGHT_BLUE, Player.up_rect, 2)
     pygame.draw.rect(screen, LIGHT_BLUE, Player.down_rect, 2)
-    bullets.update(blocks)
+    bullets.update(blocks,bullets)
     bullets.draw(screen)
     leaves_block.update()
     leaves_block.draw(screen)
