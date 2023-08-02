@@ -210,9 +210,7 @@ class Bullet(pygame.sprite.Sprite):
             self.rect.y += self.speed
         for block in blocks:
             if self.rect.colliderect(block.rect) and block.block_type == 9:
-                print("cer")
-                for block_ in blocks:
-                    block_.remove(blocks)
+                block.remove(blocks)
             if block.block_type == 1:
                 if block.width == 0 or block.height == 0:
                     block.block_type = 0
