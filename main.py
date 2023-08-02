@@ -7,6 +7,7 @@ import classes
 import map
 import load_textures
 Bot_spawn_coint = 2
+GAME = True
 bots_off = 0
 Bots = []
 Entitys = []
@@ -22,8 +23,10 @@ WHITE = (255, 255, 255)
 screen = pygame.display.set_mode((width, height))
 image1 = pygame.image.load(os.path.join("textures/blocks", 'block_5.png')).convert()
 all_sprites = pygame.sprite.Group()
+boom_sprites = pygame.sprite.Group()
 blocks = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
+gui = pygame.sprite.Group()
 leaves_block = pygame.sprite.Group()
 created_map = map.create_map()
 for block in created_map:
@@ -48,8 +51,16 @@ for i in range(Bot_spawn_coint):
         Bots.append(Bot)
 Entitys.append(Player)
 all_sprites.add(Player)
+gui_ = classes.Gui()
+gui.add(gui_)
+GERB = True
 # Game loop.
-while True:
+while GAME:
+    for block in blocks:
+        if block.block_type == 9:
+            GERB = True
+    if Player.health < 1 or not GERB:
+        GAME = False
     if len(Bots) == 0 and bots_off == 0:
         Player.level += 1
         if Player.level < 10:
@@ -92,7 +103,7 @@ while True:
     pygame.draw.rect(screen, LIGHT_BLUE, Player.right_rect, 2)
     pygame.draw.rect(screen, LIGHT_BLUE, Player.up_rect, 2)
     pygame.draw.rect(screen, LIGHT_BLUE, Player.down_rect, 2)
-    bullets.update(blocks,bullets,Entitys,all_sprites,Bots)
+    bullets.update(blocks,bullets,Entitys,all_sprites,Bots,boom_sprites)
     bullets.draw(screen)
     leaves_block.update()
     leaves_block.draw(screen)
@@ -110,7 +121,11 @@ while True:
         #pygame.draw.rect(screen, LIGHT_BLUE, bot.right_rect, 2)
         #pygame.draw.rect(screen, LIGHT_BLUE, bot.up_rect, 2)
         #pygame.draw.rect(screen, LIGHT_BLUE, bot.down_rect, 2)
-        bot.update(blocks, Entitys)
+        bot.update(blocks, Entitys,boom_sprites)
+    boom_sprites.update(boom_sprites)
+    boom_sprites.draw(screen)
+    gui.update(Player,gui,GAME)
+    gui.draw(screen)
     text_surface = my_font.render(f"Bullets:{len(bullets)} Enemys:{len(Bots)} Objects:{len(all_sprites) + len(blocks) + len(leaves_block)} ",False, (255, 255, 255))
     screen.blit(text_surface, (0, 0))
     text_surface = my_font.render(
@@ -130,4 +145,6 @@ while True:
     screen.blit(text_surface, (0, 80))
     pygame.display.flip()
     fpsClock.tick(fps)
+    GERB = False
+print("ВЫ ПРОИГРАЛИ!")
 

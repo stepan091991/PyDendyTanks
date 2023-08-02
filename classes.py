@@ -155,7 +155,7 @@ class Player(pygame.sprite.Sprite):
             self.image = self.texture_down_1
         elif self.image == self.texture_down_1:
             self.image = self.texture_down
-    def damaget(self,all_sprites,Bots,Entitys):
+    def damaget(self,all_sprites,Bots,Entitys,boom_sprites):
         self.health -= 1
 
 class Bullet(pygame.sprite.Sprite):
@@ -199,7 +199,7 @@ class Bullet(pygame.sprite.Sprite):
             self.rect.center = (4 / 2, 6 / 2)
             self.rect.x = x
             self.rect.y = y
-    def update(self,blocks,bullets,Entitys,all_sprites,Bots):
+    def update(self,blocks,bullets,Entitys,all_sprites,Bots,boom_sprites):
         if self.orientation == "up" and self.orientation:
             self.rect.y -= self.speed
         if self.orientation == "left" and self.orientation:
@@ -209,6 +209,10 @@ class Bullet(pygame.sprite.Sprite):
         if self.orientation == "down" and self.orientation:
             self.rect.y += self.speed
         for block in blocks:
+            if self.rect.colliderect(block.rect) and block.block_type == 9:
+                print("cer")
+                for block_ in blocks:
+                    block_.remove(blocks)
             if block.block_type == 1:
                 if block.width == 0 or block.height == 0:
                     block.block_type = 0
@@ -260,7 +264,7 @@ class Bullet(pygame.sprite.Sprite):
                 if self.rect.x < 0 or self.rect.x > 768 or self.rect.y < 0 or self.rect.y > 832:
                     bullets.remove(bullets)
                     self.owner.bullet = None
-            elif block.block_type != 1 and block.block_type != 0 and block.block_type != 7 and block.block_type != 8 and block.block_type != 11:
+            elif block.block_type != 1 and block.block_type != 0 and block.block_type != 7 and block.block_type != 8 and block.block_type != 11 and block.block_type != 13:
                 if self.rect.colliderect(block.rect):
                     bullets.remove(bullets)
                     self.owner.bullet = None
@@ -272,7 +276,7 @@ class Bullet(pygame.sprite.Sprite):
                         self.owner.bullet = None
                         if self.owner.entity_type == "player":
                             self.owner.killed_coint += 1
-                        entity.damaget(all_sprites,Bots,Entitys)
+                        entity.damaget(all_sprites,Bots,Entitys,boom_sprites)
 bot_texture_left = pygame.image.load("textures/entity/Enemy/2.png")
 bot_texture_right = pygame.image.load("textures/entity/Enemy/4.png")
 bot_texture_up = pygame.image.load("textures/entity/Enemy/1.png")
@@ -282,18 +286,29 @@ bot_texture_left_1 = pygame.image.load("textures/entity/Enemy/2_1.png")
 bot_texture_right_1 = pygame.image.load("textures/entity/Enemy/4_1.png")
 bot_texture_up_1 = pygame.image.load("textures/entity/Enemy/1_1.png")
 bot_texture_down_1 = pygame.image.load("textures/entity/Enemy/3_1.png")
+bot_killed_texture = pygame.image.load("textures/entity/Enemy/5.png")
 class Bot(pygame.sprite.Sprite):
     def __init__(self, types, blocks,x,y):
         pygame.sprite.Sprite.__init__(self)
+        self.last_3 = pygame.time.get_ticks()
+        self.cooldown = 300
         self.entity_type = "enemy"
         self.texture_left = bot_texture_left
+        self.texture_left.set_colorkey((0, 0, 1))
         self.texture_right = bot_texture_right
+        self.texture_right.set_colorkey((0, 0, 1))
         self.texture_up = bot_texture_up
+        self.texture_up.set_colorkey((0, 0, 1))
         self.texture_down = bot_texture_down
+        self.texture_down.set_colorkey((0, 0, 1))
         self.texture_left_1 = bot_texture_left_1
+        self.texture_left_1.set_colorkey((0, 0, 1))
         self.texture_right_1 = bot_texture_right_1
+        self.texture_right_1.set_colorkey((0, 0, 1))
         self.texture_up_1 = bot_texture_up_1
+        self.texture_up_1.set_colorkey((0, 0, 1))
         self.texture_down_1 = bot_texture_down_1
+        self.texture_down_1.set_colorkey((0, 0, 1))
         self.blocks = blocks
         self.types = types
         self.image = self.texture_down
@@ -313,7 +328,7 @@ class Bot(pygame.sprite.Sprite):
         self.now = 0
         self.rotate = "up"
         self.randim_id = random.randint(0,999)
-    def update(self,blocks,entitys):
+    def update(self,blocks,entitys,boom_sprites):
         self.now = pygame.time.get_ticks()
         if self.now - self.last >= self.animation_cooldown:
             self.last = self.now
@@ -421,7 +436,51 @@ class Bot(pygame.sprite.Sprite):
             self.image = self.texture_down_1
         elif self.image == self.texture_down_1:
             self.image = self.texture_down
-    def damaget(self,all_sprites,Bots,Entitys):
+    def damaget(self,all_sprites,Bots,Entitys,boom_sprites):
+        boom = Boom(self.rect.x,self.rect.y)
+        boom_sprites.add(boom)
         self.remove(all_sprites)
         Bots.remove(self)
         Entitys.remove(self)
+boom_texture = pygame.image.load("textures/entity/Enemy/5.png")
+class Boom(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.boom_texture = boom_texture
+        self.boom_texture.set_colorkey((0, 0, 1))
+        self.image = self.boom_texture
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.last = pygame.time.get_ticks()
+        self.cooldown = 600
+    def update(self,boom_sprites):
+        now = pygame.time.get_ticks()
+        if now - self.last >= self.cooldown:
+            self.last = now
+            boom_sprites.remove(self)
+life_texture = pygame.image.load("textures/GUI/life.png")
+life_1_texture = pygame.image.load("textures/GUI/life_1.png")
+life_2_texture = pygame.image.load("textures/GUI/life_2.png")
+class Gui(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.life_texture = life_texture
+        self.life_texture.set_colorkey((0, 0, 1))
+        self.life_1_texture = life_1_texture
+        self.life_1_texture.set_colorkey((0, 0, 1))
+        self.life_2_texture = life_2_texture
+        self.life_2_texture.set_colorkey((0, 0, 1))
+        self.image = self.life_2_texture
+        self.rect = self.image.get_rect()
+        self.rect.x = 670
+        self.rect.y = 0
+    def update(self,player,gui,GAME):
+        if player.health == 3:
+            self.image = life_2_texture
+        if player.health == 2:
+            self.image = life_1_texture
+        if player.health == 1:
+            self.image = life_texture
+        if player.health < 1:
+            self.remove(gui)
