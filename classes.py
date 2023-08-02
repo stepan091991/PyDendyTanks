@@ -137,15 +137,7 @@ class Player(pygame.sprite.Sprite):
                 self.bullet = Bullet(self, self.rect.x + 23, self.rect.y + 40)
             if self.image == self.texture_up or self.image == self.texture_up_1:
                 self.bullet = Bullet(self, self.rect.x + 3, self.rect.y + 10)
-        if self.bullet.rect.x > 716 or self.bullet.rect.y > 780 or self.bullet.rect.x < 0 or self.bullet.rect.y < 0:
-            if self.image == self.texture_left or self.image == self.texture_left_1:
-                self.bullet = Bullet(self, self.rect.x + 10, self.rect.y + 24)
-            if self.image == self.texture_right or self.image == self.texture_right_1:
-                self.bullet = Bullet(self, self.rect.x + 40, self.rect.y + 24)
-            if self.image == self.texture_down or self.image == self.texture_down_1:
-                self.bullet = Bullet(self, self.rect.x + 23, self.rect.y + 40)
-            if self.image == self.texture_up or self.image == self.texture_up_1:
-                self.bullet = Bullet(self, self.rect.x + 3, self.rect.y + 10)
+
     def animation(self):
         if self.image == self.texture_left:
             self.image = self.texture_left_1
@@ -263,6 +255,9 @@ class Bullet(pygame.sprite.Sprite):
                     block.left_rect = (block.left_rect[0], block.left_rect[1] + 16, 1, block.height)
                     block.up_rect = (block.rect.x, block.rect.y + 16, block.width, 1)
                     block.rect.y += 16
+                    bullets.remove(bullets)
+                    self.owner.bullet = None
+                if self.rect.x < 0 or self.rect.x > 768 or self.rect.y < 0 or self.rect.y > 832:
                     bullets.remove(bullets)
                     self.owner.bullet = None
             elif block.block_type != 1 and block.block_type != 0 and block.block_type != 7 and block.block_type != 8 and block.block_type != 11:
@@ -398,15 +393,6 @@ class Bot(pygame.sprite.Sprite):
         self.down_rect = (self.rect.x + 5, self.rect.y + 42, 42, 10)
     def shoot(self):
         if not self.bullet:
-            if self.image == self.texture_left or self.image == self.texture_left_1:
-                self.bullet = Bullet(self, self.rect.x + 10, self.rect.y + 24)
-            if self.image == self.texture_right or self.image == self.texture_right_1:
-                self.bullet = Bullet(self, self.rect.x + 40, self.rect.y + 24)
-            if self.image == self.texture_down or self.image == self.texture_down_1:
-                self.bullet = Bullet(self, self.rect.x + 23, self.rect.y + 40)
-            if self.image == self.texture_up or self.image == self.texture_up_1:
-                self.bullet = Bullet(self, self.rect.x + 3, self.rect.y + 10)
-        if self.bullet.rect.x > 716 or self.bullet.rect.y > 780 or self.bullet.rect.x < 0 or self.bullet.rect.y < 0:
             if self.image == self.texture_left or self.image == self.texture_left_1:
                 self.bullet = Bullet(self, self.rect.x + 10, self.rect.y + 24)
             if self.image == self.texture_right or self.image == self.texture_right_1:
