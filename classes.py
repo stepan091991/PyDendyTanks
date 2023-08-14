@@ -1,6 +1,10 @@
 import pygame
 import os
 import random
+pygame.mixer.init()
+#pygame.mixer.music.load("sounds/move.mp3")
+#pygame.mixer.music.play(-1)
+#pygame.mixer.music.set_volume(0)
 left_image = pygame.image.load("textures/entity/bullet_4.png")
 right_image = pygame.image.load("textures/entity/bullet_2.png")
 up_image = pygame.image.load("textures/entity/bullet_1.png")
@@ -123,6 +127,7 @@ class Player(pygame.sprite.Sprite):
             if self.image == self.texture_down_1:
                 self.image = self.texture_down
         collide_fase.clear()
+        #pygame.mixer.music.set_volume(0)
         self.left_rect = (self.rect.x, self.rect.y + 5, 10, 42)
         self.right_rect = (self.rect.x + 42, self.rect.y + 5, 10, 42)
         self.up_rect = (self.rect.x + 5, self.rect.y, 42, 10)

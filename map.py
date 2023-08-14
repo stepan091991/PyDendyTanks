@@ -1,29 +1,18 @@
 import os
 import pygame
 import classes
-map_1 = [0,13,0,1,0,0, 0, 0,0, 13, 0,0,1,
-         0,0,0,1,0,0, 0, 0,0, 0, 0,0,1,
-         1,1,0,1,1,0, 0, 0,0, 0, 0,0,1,
-         1,0,0,0,1,0, 0, 0,0, 1, 0,0,1,
-         1,0,1,1,1,0, 0, 0,0, 0, 0,0,1,
-         1,0,0,1,0,0, 0, 0,0, 3, 0,0,1,
-         1,1,0,1,0,0, 0, 0,0, 0, 0,0,1,
-         1,0,0,0,0,0, 0, 0,0,7,7,0,1,
-         1,0,0,8,0,0, 0, 0,0,7,7,0,1,
-         1,0,0,8,0,0, 0, 0,0,7,7,0,1,
-         1,0,0,8,0,11, 0, 0,0, 0, 0,0,1,
-         1,0,0,0,0,1, 1, 1,0, 0, 0,0,1,
-         1,1,1,1,1,1, 9,1,1,1, 1, 1,1]
-textures_dir = "textures/blocks"
-loaded_files = {}
-files = os.listdir(textures_dir)
-index = 0
-for file in files:
-    loaded_files.update({index:pygame.image.load(os.path.join(textures_dir, file))})
-    print(file)
-    index += 1
-
-def create_map():
+import json
+def create_map(map_file):
+    import classes
+    textures_dir = "textures/blocks"
+    loaded_files = {}
+    files = os.listdir(textures_dir)
+    index = 0
+    for file in files:
+        print(file)
+        loaded_files.update({index: pygame.image.load(os.path.join(textures_dir, file)).convert()})
+        index += 1
+    map_1 = json.load(map_file)["map"]
     maxX = 768
     maxY = 832
     x = 0
@@ -36,5 +25,4 @@ def create_map():
             y += 64
         else:
             x += 64
-    print(created_map)
     return created_map
