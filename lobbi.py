@@ -1,6 +1,5 @@
 import os
 import sys
-import map
 import main
 import pygame
 import random
@@ -25,6 +24,7 @@ pygame.display.set_caption("My Game")
 clock = pygame.time.Clock()
 pygame.font.init()
 my_font = pygame.font.Font('font/Nineteen Eighty Seven.otf', 40)
+my_font_2 = pygame.font.Font('font/Nineteen Eighty Seven.otf', 20)
 files = os.listdir("maps/")
 valies = []
 for i in range(len(files)):
@@ -44,13 +44,19 @@ while running:
         # check for closing window
         if event.type == pygame.QUIT:
             if dropdown.getSelected():
-                print(main.Game(Debug=False,map_text=open(f"maps/{dropdown.getSelected()}","r")))
+                print(main.Game(Debug=False,map_text=open(f"maps/{dropdown.getSelected()}","r"),sound_setting=0.7))
 
     # Рендеринг
     pygame_widgets.update(events)
     text_surface = my_font.render(
         f"Танки Python", False, (255, 255, 255))
     screen.blit(text_surface, (5, 5))
+    text_surface_2 = my_font_2.render(
+        f"Для запуска выберите карту", False, (255, 255, 255))
+    screen.blit(text_surface_2, (5, 60))
+    text_surface_3 = my_font_2.render(
+        f"и нажмите крестик", False, (255, 255, 255))
+    screen.blit(text_surface_3, (5, 80))
     pygame.display.flip()
     clock.tick(FPS)
 pygame.quit()

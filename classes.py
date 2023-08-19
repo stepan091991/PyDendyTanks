@@ -1,10 +1,13 @@
 import pygame
 import os
 import random
+sound_setting = 1
 pygame.mixer.init()
-#pygame.mixer.music.load("sounds/move.mp3")
-#pygame.mixer.music.play(-1)
-#pygame.mixer.music.set_volume(0)
+pygame.mixer.music.load("sounds/move.mp3")
+shoot_sound = pygame.mixer.Sound("sounds/shoot.mp3")
+death_sound = pygame.mixer.Sound("sounds/death.mp3")
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(sound_setting)
 left_image = pygame.image.load("textures/entity/bullet_4.png")
 right_image = pygame.image.load("textures/entity/bullet_2.png")
 up_image = pygame.image.load("textures/entity/bullet_1.png")
@@ -105,18 +108,22 @@ class Player(pygame.sprite.Sprite):
             if self.image != self.texture_left:
                 self.image = self.texture_left_1
             self.rect.x -= self.speed
+            pygame.mixer.music.set_volume(sound_setting)
         elif keystate[pygame.K_RIGHT] and self.rect.x < 716 and not "right" in collide_fase:
             if self.image != self.texture_right:
                 self.image = self.texture_right_1
             self.rect.x += self.speed
+            pygame.mixer.music.set_volume(sound_setting)
         elif keystate[pygame.K_UP] and self.rect.y > 0 and not "up" in collide_fase:
             if self.image != self.texture_up:
                 self.image = self.texture_up_1
             self.rect.y -= self.speed
+            pygame.mixer.music.set_volume(sound_setting)
         elif keystate[pygame.K_DOWN] and self.rect.y < 780 and not "down" in collide_fase:
             if self.image != self.texture_down:
                 self.image = self.texture_down_1
             self.rect.y += self.speed
+            pygame.mixer.music.set_volume(sound_setting)
         else:
             if self.image == self.texture_left_1:
                 self.image = self.texture_left
@@ -126,8 +133,8 @@ class Player(pygame.sprite.Sprite):
                 self.image = self.texture_up
             if self.image == self.texture_down_1:
                 self.image = self.texture_down
+            pygame.mixer.music.set_volume(0)
         collide_fase.clear()
-        #pygame.mixer.music.set_volume(0)
         self.left_rect = (self.rect.x, self.rect.y + 5, 10, 42)
         self.right_rect = (self.rect.x + 42, self.rect.y + 5, 10, 42)
         self.up_rect = (self.rect.x + 5, self.rect.y, 42, 10)
@@ -142,6 +149,7 @@ class Player(pygame.sprite.Sprite):
                 self.bullet = Bullet(self, self.rect.x + 23, self.rect.y + 40)
             if self.image == self.texture_up or self.image == self.texture_up_1:
                 self.bullet = Bullet(self, self.rect.x + 3, self.rect.y + 10)
+            shoot_sound.play(loops=0, maxtime=0, fade_ms=0)
 
     def animation(self):
         if self.image == self.texture_left:
@@ -419,6 +427,7 @@ class Bot(pygame.sprite.Sprite):
                 self.bullet = Bullet(self, self.rect.x + 23, self.rect.y + 40)
             if self.image == self.texture_up or self.image == self.texture_up_1:
                 self.bullet = Bullet(self, self.rect.x + 3, self.rect.y + 10)
+            shoot_sound.play(loops=0, maxtime=0, fade_ms=0)
     def animation(self):
         if self.image == self.texture_left:
             self.image = self.texture_left_1
@@ -457,6 +466,7 @@ class Boom(pygame.sprite.Sprite):
         self.rect.y = y
         self.last = pygame.time.get_ticks()
         self.cooldown = 600
+        death_sound.play(loops=0, maxtime=0, fade_ms=0)
     def update(self,boom_sprites):
         now = pygame.time.get_ticks()
         if now - self.last >= self.cooldown:
@@ -487,3 +497,8 @@ class Gui(pygame.sprite.Sprite):
             self.image = life_texture
         if player.health < 1:
             self.remove(gui)
+def off_sound():
+    pygame.mixer.music.set_volume(0)
+def set_sound_setting(sound_setting_self):
+    global sound_setting
+    sound_setting = sound_setting_self

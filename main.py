@@ -3,10 +3,11 @@ import random
 import sys
 import pygame
 from pygame.locals import *
-def Game(Debug,map_text):
+def Game(Debug,map_text,sound_setting):
     import classes
     import map
     import load_textures
+    classes.set_sound_setting(sound_setting)
     Bot_spawn_coint = 2
     GAME = True
     bots_off = 0
@@ -171,6 +172,7 @@ def Game(Debug,map_text):
             screen.blit(text_surface, (180, 295))
             pygame.display.flip()
             fpsClock.tick(fps)
+            classes.off_sound()
             pygame.time.wait(5000)
             GAME = False
         text_surface = my_font_4.render(
@@ -179,7 +181,6 @@ def Game(Debug,map_text):
         pygame.display.flip()
         fpsClock.tick(fps)
         GERB = False
-    return "KEK"
 
 if __name__ == "__main__":
     print("Этот скрипт нельзя запускать без лаунчера!")
